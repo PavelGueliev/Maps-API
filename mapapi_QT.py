@@ -22,7 +22,6 @@ class Example(QMainWindow, Ui_MainWindow):
         self.label.setStyleSheet(f"border-image:url(map.png)")
         self.setWindowTitle('Отображение карты')
 
-
     def getImage(self):
         map_request = "http://static-maps.yandex.ru/1.x/"
         map_params = {

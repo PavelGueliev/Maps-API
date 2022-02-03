@@ -61,7 +61,7 @@
     <item row="0" column="1" rowspan="3">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>вверх/вниз/вправо/влево - перемещать центр карты 
+       <string>w/s/d/a - перемещать центр карты 
 PgUp и PgDown- увеличивать и уменьшать масштаб отображения карты</string>
       </property>
      </widget>

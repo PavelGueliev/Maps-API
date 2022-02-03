@@ -60,5 +60,5 @@ class Ui_MainWindow(object):
         self.radioButton.setText(_translate("MainWindow", "схема"))
         self.radioButton_3.setText(_translate("MainWindow", "гибрид"))
         self.radioButton_2.setText(_translate("MainWindow", "спутник"))
-        self.label_2.setText(_translate("MainWindow", "вверх/вниз/вправо/влево - перемещать центр карты \n"
+        self.label_2.setText(_translate("MainWindow", "w/s/d/a - перемещать центр карты \n"
 "PgUp и PgDown- увеличивать и уменьшать масштаб отображения карты"))

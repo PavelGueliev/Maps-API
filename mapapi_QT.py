@@ -1,6 +1,7 @@
 import os
 import sys
 import requests
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
 from main_qt import Ui_MainWindow
 
@@ -12,9 +13,8 @@ class Example(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.ll = float(input()), float(input())
+        self.ll = [float(input()), float(input())]
         self.spn = float(input())
-        self.radioButton_2.setChecked(True)
         self.l = self.buttonGroup.checkedButton().text()
         self.radioButton.clicked.connect(
                     lambda: self.getImage(self.ll[0], self.ll[1], self.spn, self.buttonGroup.checkedButton().text())
@@ -28,6 +28,22 @@ class Example(QMainWindow, Ui_MainWindow):
 
         self.getImage(self.ll[0], self.ll[1], self.spn, self.l)
         self.setWindowTitle('Отображение карты')
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            self.spn += 1
+        elif event.key() == Qt.Key_PageDown:
+            if self.spn - 1 > 0:
+                self.spn -= 0.01
+        elif event.key() == Qt.Key_A:
+            self.ll[0] -= 0.01
+        elif event.key() == Qt.Key_D:
+            self.ll[0] += 0.01
+        elif event.key() == Qt.Key_W:
+            self.ll[1] += 0.01
+        elif event.key() == Qt.Key_S:
+            self.ll[1] -= 0.01
+        self.getImage(self.ll[0], self.ll[1], self.spn, self.buttonGroup.checkedButton().text())
 
     def getImage(self, ll_1, ll_2, spn, l):
         try:
@@ -58,11 +74,17 @@ class Example(QMainWindow, Ui_MainWindow):
         map_file = "map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
+        print(self.spn)
         self.label.setStyleSheet(f"border-image:url(map.png)")
+
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    sys.excepthook = except_hook
     ex = Example()
     ex.show()
     os.remove('map.png')

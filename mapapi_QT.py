@@ -11,12 +11,6 @@ SCREEN_SIZE = [600, 450]
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 
 
-class Window(QMainWindow, Ui_MainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-
-
 class Example(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -30,7 +24,6 @@ class Example(QMainWindow, Ui_MainWindow):
 
 
     def getImage(self):
-
         map_request = "http://static-maps.yandex.ru/1.x/"
         map_params = {
             "apikey": API_KEY,

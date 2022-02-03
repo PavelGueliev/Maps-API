@@ -11,12 +11,6 @@ SCREEN_SIZE = [600, 450]
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 
 
-class Window(QMainWindow, Ui_MainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-
-
 class Example(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()

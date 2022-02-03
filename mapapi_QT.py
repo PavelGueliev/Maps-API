@@ -1,9 +1,6 @@
 import os
 import sys
-from io import BytesIO
 import requests
-from PIL import Image, ImageQt
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
 from main_qt import Ui_MainWindow
 
@@ -17,20 +14,38 @@ class Example(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.ll = float(input()), float(input())
         self.spn = float(input())
-        self.getImage()
+        self.radioButton_2.setChecked(True)
+        self.l = self.buttonGroup.checkedButton().text()
+        self.radioButton.clicked.connect(
+                    lambda: self.getImage(self.ll[0], self.ll[1], self.spn, self.buttonGroup.checkedButton().text())
+                )
+        self.radioButton_2.clicked.connect(
+                    lambda: self.getImage(self.ll[0], self.ll[1], self.spn, self.buttonGroup.checkedButton().text())
+                )
+        self.radioButton_3.clicked.connect(
+                    lambda: self.getImage(self.ll[0], self.ll[1], self.spn, self.buttonGroup.checkedButton().text())
+                )
 
-        self.label.setStyleSheet(f"border-image:url(map.png)")
+        self.getImage(self.ll[0], self.ll[1], self.spn, self.l)
         self.setWindowTitle('Отображение карты')
 
-
-    def getImage(self):
-
+    def getImage(self, ll_1, ll_2, spn, l):
+        try:
+            os.remove('map.png')
+        except Exception:
+            pass
+        if l == 'схема':
+            l = 'map'
+        elif l == 'спутник':
+            l = 'sat'
+        elif l == 'гибрид':
+            l = 'sat,skl'
         map_request = "http://static-maps.yandex.ru/1.x/"
         map_params = {
             "apikey": API_KEY,
-            "ll": f'{self.ll[0]},{self.ll[1]}',
-            "spn": f'{self.spn},{self.spn}',
-            "l": 'map'
+            "ll": f'{ll_1},{ll_2}',
+            "spn": f'{spn},{spn}',
+            "l": l
         }
         response = requests.get(map_request, params=map_params)
 
@@ -43,6 +58,7 @@ class Example(QMainWindow, Ui_MainWindow):
         map_file = "map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
+        self.label.setStyleSheet(f"border-image:url(map.png)")
 
 
 if __name__ == '__main__':

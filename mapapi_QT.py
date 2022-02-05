@@ -113,7 +113,6 @@ class Example(QMainWindow, Ui_MainWindow):
         map_file = "map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
-        print(self.spn)
         self.label.setStyleSheet(f"border-image:url(map.png)")
 
         #self.img = ImageQt.ImageQt(Image.open(BytesIO(response.content)))

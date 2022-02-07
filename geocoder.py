@@ -58,6 +58,37 @@ def lonlat_distance(a, b):
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 
 
+def postal_code(address):
+    # Собираем запрос для геокодера.
+    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/"
+    geocoder_params = {
+        "apikey": API_KEY,
+        "geocode": f'{address[0]},{address[1]}',
+        "format": "json",
+        'kind': 'house'}
+
+    # Выполняем запрос.
+    response = requests.get(geocoder_request, params=geocoder_params)
+
+    if response:
+        # Преобразуем ответ в json-объект
+        json_response = response.json()
+    else:
+        raise RuntimeError(
+            f"""Ошибка выполнения запроса:
+            {geocoder_request}
+            Http статус: {response.status_code} ({response.reason})""")
+
+    # Получаем первый топоним из ответа геокодера.
+    # Согласно описанию ответа он находится по следующему пути:
+    try:
+        features = json_response["response"]["GeoObjectCollection"]["featureMember"][0]['GeoObject']['metaDataProperty']\
+        ['GeocoderMetaData']['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']\
+        ['Thoroughfare']['Premise']['PostalCode']['PostalCodeNumber']
+        return features
+    except Exception:
+        return None
+
 
 def geocode(address):
     # Собираем запрос для геокодера.

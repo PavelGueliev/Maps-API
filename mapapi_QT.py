@@ -2,7 +2,7 @@ import os
 import sys
 import requests
 from PyQt5.QtCore import Qt
-from geocoder import get_coordinates
+from geocoder import get_coordinates, geocode, get_nearest_object, postal_code
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
 from main_qt import Ui_MainWindow
 from PIL import Image, ImageQt
@@ -65,7 +65,13 @@ class Example(QMainWindow, Ui_MainWindow):
         try:
             self.pt = get_coordinates(self.lineEdit.text())
             self.ll = self.pt[::]
+            if self.checkBox.isChecked():
+                adress = postal_code(self.pt)
+            else:
+                adress = ''
             self.getImage(self.ll[0], self.ll[1], self.spn, self.comboBox.currentText())
+            self.statusbar.showMessage(geocode(self.lineEdit.text())['metaDataProperty']['GeocoderMetaData']['text']
+                                       + ' ' + adress)
         except Exception:
             self.pt = None
             self.lineEdit.clear()
@@ -128,6 +134,9 @@ if __name__ == '__main__':
     sys.excepthook = except_hook
     ex = Example()
     ex.show()
-    os.remove('map.png')
+    try:
+        os.remove('map.png')
+    except Exception:
+        pass
     sys.exit(app.exec())
 

@@ -9,7 +9,7 @@ from PIL import Image, ImageQt
 from io import BytesIO
 from PyQt5.QtGui import QPixmap
 
-SCREEN_SIZE = [600, 450]
+SCREEN_SIZE = [650, 650]
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 
 
@@ -28,6 +28,16 @@ class Example(QMainWindow, Ui_MainWindow):
         self.pt = None
         self.getImage(self.ll[0], self.ll[1], self.spn, self.l)
         self.setWindowTitle('Отображение карты')
+        self.setFixedSize(*SCREEN_SIZE)
+        self.lineEdit.textChanged.connect(self.add_point)
+        self.label.mousePressEvent = self.getPos
+
+    def getPos(self, coords_mouse):
+        x_size, y_size = (float(self.spn) / self.label.width(),
+                          float(self.spn) / self.label.height())
+        self.pt = (str((self.ll[0] - float(self.spn)) + x_size * (coords_mouse.x() * 2)),
+                   str((self.ll[1] - float(self.spn)) + y_size * (coords_mouse.y() * 2)))
+        self.getImage(self.ll[0], self.ll[1], self.spn, self.comboBox.currentText())
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageDown:
@@ -62,19 +72,20 @@ class Example(QMainWindow, Ui_MainWindow):
         self.getImage(self.ll[0], self.ll[1], self.spn, self.comboBox.currentText())
 
     def add_point(self):
+        text = self.sender().text()
         try:
-            self.pt = get_coordinates(self.lineEdit.text())
-            self.ll = self.pt[::]
-            if self.checkBox.isChecked():
-                adress = postal_code(self.pt)
-            else:
-                adress = ''
-            self.getImage(self.ll[0], self.ll[1], self.spn, self.comboBox.currentText())
-            self.statusbar.showMessage(geocode(self.lineEdit.text())['metaDataProperty']['GeocoderMetaData']['text']
-                                       + ' ' + adress)
+            if get_coordinates(text)[0]:
+                self.pt = get_coordinates(text)
+                self.ll = self.pt[::]
+                if self.checkBox.isChecked():
+                    adress = postal_code(self.pt)
+                else:
+                    adress = ''
+                self.getImage(self.ll[0], self.ll[1], self.spn, self.comboBox.currentText())
+                self.statusbar.showMessage(geocode(text)['metaDataProperty']['GeocoderMetaData']['text']
+                                           + ' ' + adress)
         except Exception:
             self.pt = None
-            self.lineEdit.clear()
 
     def del_point(self):
         self.pt = None
@@ -119,10 +130,9 @@ class Example(QMainWindow, Ui_MainWindow):
         map_file = "map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
-        self.label.setStyleSheet(f"border-image:url(map.png)")
 
-        #self.img = ImageQt.ImageQt(Image.open(BytesIO(response.content)))
-        #self.label.setPixmap(QPixmap.fromImage(self.img))
+        self.img = ImageQt.ImageQt(Image.open(BytesIO(response.content)))
+        self.label.setPixmap(QPixmap.fromImage(self.img))
 
 
 def except_hook(cls, exception, traceback):
